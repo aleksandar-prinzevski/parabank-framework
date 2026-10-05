@@ -1,5 +1,16 @@
 {
   "code": "mk",
   "name": "ParaBank Macedonia",
-  "baseUrl": "https://parabank.parasoft.com/parabank"
+  "baseUrl": "https://parabank.parasoft.com/parabank",
+  "customer": {
+    "firstName": "User",
+    "lastName": "Test",
+    "street": "Partizanska",
+    "city": "Skopje",
+    "state": "Skopje",
+    "zipCode": "1000",
+    "phone": "070000111",
+    "ssn": "0000000000003",
+    "password": "User3test"
+  }
 }

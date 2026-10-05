@@ -5,6 +5,17 @@ export interface RegionConfig {
   code: string;
   name: string;
   baseUrl: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    phone: string;
+    ssn: string;
+    password: string;
+  };
 }
 
 export function loadRegion(): RegionConfig {
