@@ -1,0 +1,17 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
+export interface RegionConfig {
+  code: string;
+  name: string;
+  baseUrl: string;
+}
+
+export function loadRegion(): RegionConfig {
+  const code = (process.env.REGION ?? 'mk').toLowerCase();
+  const file = path.resolve(__dirname, '../../config/regions', `${code}.json`);
+  if (!fs.existsSync(file)) {
+    throw new Error(`Unknown region "${code}". Expected file: ${file}`);
+  }
+  return JSON.parse(fs.readFileSync(file, 'utf-8')) as RegionConfig;
+}
