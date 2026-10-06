@@ -9,6 +9,12 @@ export interface RegisteredUser {
 export async function registerUser(page: Page, region: RegionConfig): Promise<RegisteredUser> {
   const c = region.customer;
   const username = `${region.code}${Date.now().toString(36)}`;  // Generate a unique username based on the region with max length of 36 characters. 36 characters is system comstraint.
+  
+  const unique = Date.now().toString();
+  const lastName = `${c.lastName}${unique.slice(-6)}`;   // Append a unique suffix to the last name to ensure uniqueness
+  const ssn = unique.slice(-9);   // Use the last 9 digits of the unique timestamp as a mock SSN
+  const phone = `${c.phone.slice(0, 3)}${unique.slice(-6)}`;   // Use the first 3 digits of the original phone number and append a unique suffix to ensure uniqueness
+  
   await page.goto('register.htm');
   await page.locator('[id="customer.firstName"]').fill(c.firstName);
   await page.locator('[id="customer.lastName"]').fill(c.lastName);

@@ -16,6 +16,8 @@ export interface RegionConfig {
     ssn: string;
     password: string;
   };
+
+
 }
 
 export function loadRegion(): RegionConfig {

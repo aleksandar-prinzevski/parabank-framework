@@ -12,5 +12,11 @@
     "phone": "070000111",
     "ssn": "0000000000003",
     "password": "User3test"
-  }
+  },
+
+  "existingUser": {
+  "username": "john",
+  "password": "demo"
+}
+
 }
