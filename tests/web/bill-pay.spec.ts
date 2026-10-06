@@ -28,4 +28,8 @@ test('pay a bill to a new payee', async ({ page }) => {
   await expect(page.getByText('Bill Payment Complete')).toBeVisible();
   await expect(page.getByText('Electric Company')).toBeVisible();
   //await page.pause(); // Used for manual inspection of the page during test execution
+
+  // verify the money left the account
+  await page.getByRole('link', { name: 'Accounts Overview' }).click();
+  await expect(page.locator('#accountTable')).toContainText('$490.50');
 });
