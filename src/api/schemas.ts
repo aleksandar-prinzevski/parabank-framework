@@ -14,4 +14,12 @@ export const customerSchema = z.object({
   ssn: z.string(),
 });
 
+export const accountSchema = z.object({
+  id: z.number(),
+  customerId: z.number(),
+  type: z.enum(['CHECKING', 'SAVINGS', 'LOAN']),
+  balance: z.number(),
+});
+
 export type Customer = z.infer<typeof customerSchema>;
+export type Account = z.infer<typeof accountSchema>;
