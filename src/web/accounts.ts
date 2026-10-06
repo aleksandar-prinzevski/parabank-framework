@@ -21,3 +21,13 @@ export async function transferFunds(page: Page, toAccountId: string, amount: str
   await expect(page.getByText('Transfer Complete!')).toBeVisible();
   return fromAccountId;
 }
+
+// Opens Transfer Funds with the first account as the source and the given account as the target.
+export async function openTransferForm(page: Page, toAccountId: string): Promise<string> {
+  await page.getByRole('link', { name: 'Transfer Funds' }).click();
+  await expect(page.locator('#fromAccountId option').nth(1)).toBeAttached();
+  const fromAccountId = await page.locator('#fromAccountId option').first().innerText();
+  await page.locator('#fromAccountId').selectOption(fromAccountId);
+  await page.locator('#toAccountId').selectOption(toAccountId);
+  return fromAccountId;
+}
