@@ -4,11 +4,18 @@ import { loadRegion } from './src/core/config';
 const region = loadRegion();
 
 export default defineConfig({
-  testDir: './tests',
   reporter: 'html',
-  use: {
-    baseURL: `${region.baseUrl}/`,
-    trace: 'on-first-retry',
-  },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  use: { trace: 'on-first-retry' },
+  projects: [
+    {
+      name: 'web',
+      testDir: './tests/web',
+      use: { ...devices['Desktop Chrome'], baseURL: `${region.baseUrl}/` },
+    },
+    {
+      name: 'api',
+      testDir: './tests/api',
+      use: { baseURL: `${region.baseUrl}/services/bank/` },
+    },
+  ],
 });

@@ -1,20 +1,24 @@
 import { test, expect } from '@playwright/test';
+import { loadRegion } from '../../src/core/config';
+import { registerUser } from '../../src/web/registerUser';
 
-test('lookup login info for existing user', async ({ page }) => {
+const region = loadRegion();
+
+test('lookup login info for a freshly registered user', async ({ page }) => {
+  test.setTimeout(90_000);
+  const user = await registerUser(page, region);
+  await page.getByRole('link', { name: 'Log Out' }).click();
+
   await page.goto('lookup.htm');
-
-  await page.locator('#firstName').fill('User3');
-  await page.locator('#lastName').fill('test');
-  await page.locator('[id="address.street"]').fill('Partizanska');
-  await page.locator('[id="address.city"]').fill('Skopje');
-  await page.locator('[id="address.state"]').fill('Skopje');
-  await page.locator('[id="address.zipCode"]').fill('1000');
-  await page.locator('#ssn').fill('0000000000003');
-    //await page.pause();
-
+  await page.locator('#firstName').fill(user.firstName);
+  await page.locator('#lastName').fill(user.lastName);
+  await page.locator('[id="address.street"]').fill(user.street);
+  await page.locator('[id="address.city"]').fill(user.city);
+  await page.locator('[id="address.state"]').fill(user.state);
+  await page.locator('[id="address.zipCode"]').fill(user.zipCode);
+  await page.locator('#ssn').fill(user.ssn);
   await page.getByRole('button', { name: 'Find My Login Info' }).click();
-    //await page.pause();
 
-  await expect(page.getByText('bpmkuser3')).toBeVisible();
-  await expect(page.getByText('User3test')).toBeVisible();
+  await expect(page.getByText(user.username)).toBeVisible();
+  await expect(page.getByText(user.password)).toBeVisible();
 });
