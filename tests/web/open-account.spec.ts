@@ -9,7 +9,7 @@ test('open a new savings account', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Open New Account' }).click();
   await page.locator('#type').selectOption('SAVINGS');
-   await page.pause();
+   //await page.pause();
 
   // wait until the funding-account dropdown is filled
   await expect(page.locator('#fromAccountId option').first()).toBeAttached();
