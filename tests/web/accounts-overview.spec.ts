@@ -16,5 +16,8 @@ test('accounts overview shows both accounts and the total', async ({ page }) => 
   const table = page.locator('#accountTable');
   await expect(table).toContainText(fromAccountId);
   await expect(table).toContainText(newAccountId);
+  await expect(table).toContainText('$515.50');
+  await expect(table).toContainText('$405.50');
+  await expect(table).toContainText('$110.00');
   console.log(await table.innerText());
 });
