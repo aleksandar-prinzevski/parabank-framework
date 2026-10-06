@@ -21,5 +21,20 @@ export const accountSchema = z.object({
   balance: z.number(),
 });
 
+export const transactionSchema = z.object({
+  id: z.number(),
+  accountId: z.number(),
+  date: z.number(),
+  amount: z.number(),
+  description: z.string(),
+  type: z.string(),
+});
+
+export const billPayResponseSchema = z.object({
+  payeeName: z.string(),
+  amount: z.number(),
+  accountId: z.number(),
+});
+
 export type Customer = z.infer<typeof customerSchema>;
 export type Account = z.infer<typeof accountSchema>;
