@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { z } from 'zod';
 import { loadRegion } from '../../src/core/config';
-import { customerSchema, accountSchema, transactionSchema } from '../../src/api/schemas';
+import { customerSchema, accountSchema, transactionSchema, billPayResponseSchema } from '../../src/api/schemas';
 
 const region = loadRegion();
 const user = region.existingUser;
@@ -80,7 +80,9 @@ test('API e2e: login, accounts, create account, verify it', async ({ request }) 
       },
     });
     console.log(res.status(), await res.text());
-    expect(res.status()).toBe(200);
+    
+    const paid = billPayResponseSchema.parse(await res.json());
+    expect(paid).toMatchObject({ payeeName: 'Electric Company', amount: 5, accountId: accountB.id });
   });
 
 });
