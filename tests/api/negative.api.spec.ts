@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { loadRegion } from '../../src/core/config';
+import { loadApiUser } from '../../src/api/testUser';
 
-const region = loadRegion();
 const json = { accept: 'application/json' };
-
 // Negative scenarios: requests that are invalid and should be rejected.
 // Each test sends one bad request and checks how the API answers.
 
@@ -12,8 +10,10 @@ test('unknown account returns 400', async ({ request }) => {
   expect(res.status()).toBe(400);
 });
 
-// Behavior not known yet: we print the response first, then add assertions.
+// Wrong password: the API must refuse the login with a clear message.
 test('login with a wrong password', async ({ request }) => {
+  const user = loadApiUser(); // read inside the test: the setup project has already created the file
   const res = await request.get(`login/${user.username}/wrong-password`, { headers: json });
-  console.log(res.status(), await res.text());
+  expect(res.status()).toBe(400);
+  expect(await res.text()).toContain('Invalid username and/or password');
 });
