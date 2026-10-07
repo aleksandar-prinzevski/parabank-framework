@@ -68,7 +68,10 @@ jobs:
         if: failure()
         run: |
           docker ps -a
-          docker logs $(docker ps -aq --filter ancestor=parasoft/parabank) 2>&1 | tail -150
+          for c in $(docker ps -aq); do
+            echo "=== container $c ==="
+            docker logs $c 2>&1 | tail -150
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -112,7 +115,10 @@ jobs:
         if: failure()
         run: |
           docker ps -a
-          docker logs $(docker ps -aq --filter ancestor=parasoft/parabank) 2>&1 | tail -150
+          for c in $(docker ps -aq); do
+            echo "=== container $c ==="
+            docker logs $c 2>&1 | tail -150
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
