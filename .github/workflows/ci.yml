@@ -65,12 +65,14 @@ jobs:
           echo "ParaBank did not start" && exit 1
       - name: Initialize ParaBank database
         run: |
-          echo "--- admin page form ---"
-          curl -s http://localhost:8080/parabank/admin.htm | grep -i -E "<form|<input|<button|INIT|CLEAN" || true
-          echo "--- init attempt ---"
-          curl -s -o /dev/null -w "POST admin.htm -> HTTP %{http_code}\n" -X POST -d "action=INIT" http://localhost:8080/parabank/admin.htm
+          echo "--- admin.htm (GET) ---"
+          curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/parabank/admin.htm | sed 's/<[^>]*>//g' | grep -v '^\s*$' | head -30
+          echo "--- initializeDB via the services API ---"
+          curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8080/parabank/services/bank/initializeDB
           echo "--- john login ---"
           curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/parabank/services/bank/login/john/demo
+          echo "--- startup log: errors and database lines ---"
+          docker logs $(docker ps -aq | head -1) 2>&1 | grep -n -i -E "ERROR|Exception|hsql|initializ|sequence" | head -40
       - run: npx playwright test --project=web
       - run: npx playwright test --project=api
       - name: ParaBank container log (on failure)
@@ -121,12 +123,14 @@ jobs:
           echo "ParaBank did not start" && exit 1
       - name: Initialize ParaBank database
         run: |
-          echo "--- admin page form ---"
-          curl -s http://localhost:8080/parabank/admin.htm | grep -i -E "<form|<input|<button|INIT|CLEAN" || true
-          echo "--- init attempt ---"
-          curl -s -o /dev/null -w "POST admin.htm -> HTTP %{http_code}\n" -X POST -d "action=INIT" http://localhost:8080/parabank/admin.htm
+          echo "--- admin.htm (GET) ---"
+          curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/parabank/admin.htm | sed 's/<[^>]*>//g' | grep -v '^\s*$' | head -30
+          echo "--- initializeDB via the services API ---"
+          curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8080/parabank/services/bank/initializeDB
           echo "--- john login ---"
           curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/parabank/services/bank/login/john/demo
+          echo "--- startup log: errors and database lines ---"
+          docker logs $(docker ps -aq | head -1) 2>&1 | grep -n -i -E "ERROR|Exception|hsql|initializ|sequence" | head -40
       - run: npx playwright test --project=web
       - run: npx playwright test --project=web
       - name: ParaBank container log (on failure)
