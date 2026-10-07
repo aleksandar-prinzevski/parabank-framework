@@ -5,7 +5,6 @@ import { customerSchema, accountSchema, transactionSchema, billPayResponseSchema
 import { loadApiUser } from '../../src/api/testUser';
 
 const region = loadRegion();
-const user = loadApiUser();
 const json = { accept: 'application/json' };
 
 test('API e2e: login, accounts, create account, verify it', async ({ request }) => {

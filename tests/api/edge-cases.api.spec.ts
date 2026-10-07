@@ -5,7 +5,6 @@ import { customerSchema, accountSchema } from '../../src/api/schemas';
 import { loadApiUser } from '../../src/api/testUser';
 
 const region = loadRegion();
-const user = loadApiUser();
 const json = { accept: 'application/json' };
 
 // Edge cases: valid requests with unusual values, and repeated requests.

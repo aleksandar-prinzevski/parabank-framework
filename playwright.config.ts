@@ -7,7 +7,7 @@ export default defineConfig({
   workers: 1,
     // In CI: print a list and write the HTML report without trying to open it.
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'html',
-  use: { trace: 'on-first-retry' },
+    use: { trace: 'on-first-retry', screenshot: 'only-on-failure' },
   projects: [
     {
       name: 'web',
