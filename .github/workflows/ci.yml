@@ -63,6 +63,12 @@ jobs:
             sleep 5
           done
           echo "ParaBank did not start" && exit 1
+      - name: Initialize ParaBank database
+        run: |
+          curl -sf -X POST -d "action=INIT" http://localhost:8080/parabank/admin.htm > /dev/null
+          # prove it worked: the demo user only exists once the database is initialized
+          curl -sf http://localhost:8080/parabank/services/bank/login/john/demo
+      - run: npx playwright test --project=web
       - run: npx playwright test --project=api
       - name: ParaBank container log (on failure)
         if: failure()
@@ -110,6 +116,12 @@ jobs:
             sleep 5
           done
           echo "ParaBank did not start" && exit 1
+      - name: Initialize ParaBank database
+        run: |
+          curl -sf -X POST -d "action=INIT" http://localhost:8080/parabank/admin.htm > /dev/null
+          # prove it worked: the demo user only exists once the database is initialized
+          curl -sf http://localhost:8080/parabank/services/bank/login/john/demo
+      - run: npx playwright test --project=web
       - run: npx playwright test --project=web
       - name: ParaBank container log (on failure)
         if: failure()
