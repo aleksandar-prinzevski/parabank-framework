@@ -2,12 +2,14 @@ import { test, expect } from '@playwright/test';
 import { z } from 'zod';
 import { loadRegion } from '../../src/core/config';
 import { customerSchema, accountSchema, transactionSchema, billPayResponseSchema } from '../../src/api/schemas';
+import { loadApiUser } from '../../src/api/testUser';
 
 const region = loadRegion();
-const user = region.existingUser;
+const user = loadApiUser();
 const json = { accept: 'application/json' };
 
 test('API e2e: login, accounts, create account, verify it', async ({ request }) => {
+  const user = loadApiUser();
   const customer = await test.step('1. login', async () => {
     const res = await request.get(`login/${user.username}/${user.password}`, { headers: json });
     expect(res.status()).toBe(200);

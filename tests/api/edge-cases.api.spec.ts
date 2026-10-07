@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 import { z } from 'zod';
 import { loadRegion } from '../../src/core/config';
 import { customerSchema, accountSchema } from '../../src/api/schemas';
+import { loadApiUser } from '../../src/api/testUser';
 
 const region = loadRegion();
-const user = region.existingUser;
+const user = loadApiUser();
 const json = { accept: 'application/json' };
 
 // Edge cases: valid requests with unusual values, and repeated requests.
@@ -15,6 +16,7 @@ test.describe('transfers on a fresh account', () => {
 
   // Setup: log in, take the first existing account as the source, and create a new savings account as the target.
   test.beforeEach(async ({ request }) => {
+    const user = loadApiUser();
     const login = await request.get(`login/${user.username}/${user.password}`, { headers: json });
     const customer = customerSchema.parse(await login.json());
     const list = await request.get(`customers/${customer.id}/accounts`, { headers: json });
