@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import { loadRegion } from '../../src/core/config';
 
 const region = loadRegion();
-const user = region.existingUser;
 const json = { accept: 'application/json' };
 
 // Negative scenarios: requests that are invalid and should be rejected.
