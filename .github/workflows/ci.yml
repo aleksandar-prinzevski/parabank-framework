@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      layer:
+        description: Which layer to run
+        type: choice
+        options: [all, api, web]
+        default: all
+      region:
+        description: Which region to run
+        type: choice
+        options: [all, mk, de]
+        default: all
+
+jobs:
+  # Turns the "region" choice into a list the test jobs can loop over.
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      regions: ${{ steps.pick.outputs.regions }}
+    steps:
+      - id: pick
+        run: |
+          if [ "${{ inputs.region }}" = "mk" ] || [ "${{ inputs.region }}" = "de" ]; then
+            echo 'regions=["${{ inputs.region }}"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'regions=["mk","de"]' >> "$GITHUB_OUTPUT"
+          fi
+
+  api:
+    needs: prepare
+    if: github.event_name != 'workflow_dispatch' || inputs.layer == 'all' || inputs.layer == 'api'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        region: ${{ fromJSON(needs.prepare.outputs.regions) }}
+    services:
+      parabank:
+        image: parasoft/parabank
+        ports: ['8080:8080']
+    env:
+      REGION: ${{ matrix.region }}
+      BASE_URL: http://localhost:8080/parabank
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # The API project registers its test user in a browser first, so it needs Chromium too.
+      - run: npx playwright install --with-deps chromium
+      - name: Wait for ParaBank
+        run: |
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8080/parabank/index.htm > /dev/null && exit 0
+            sleep 5
+          done
+          echo "ParaBank did not start" && exit 1
+      - run: npx playwright test --project=api
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-api-${{ matrix.region }}
+          path: playwright-report/
+
+  web:
+    needs: prepare
+    if: github.event_name != 'workflow_dispatch' || inputs.layer == 'all' || inputs.layer == 'web'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        region: ${{ fromJSON(needs.prepare.outputs.regions) }}
+    services:
+      parabank:
+        image: parasoft/parabank
+        ports: ['8080:8080']
+    env:
+      REGION: ${{ matrix.region }}
+      BASE_URL: http://localhost:8080/parabank
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Wait for ParaBank
+        run: |
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8080/parabank/index.htm > /dev/null && exit 0
+            sleep 5
+          done
+          echo "ParaBank did not start" && exit 1
+      - run: npx playwright test --project=web
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-web-${{ matrix.region }}
+          path: playwright-report/

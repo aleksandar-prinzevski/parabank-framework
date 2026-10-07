@@ -5,7 +5,8 @@ const region = loadRegion();
 
 export default defineConfig({
   workers: 1,
-  reporter: 'html',
+    // In CI: print a list and write the HTML report without trying to open it.
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'html',
   use: { trace: 'on-first-retry' },
   projects: [
     {

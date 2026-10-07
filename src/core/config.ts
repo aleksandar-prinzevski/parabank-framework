@@ -26,5 +26,7 @@ export function loadRegion(): RegionConfig {
   if (!fs.existsSync(file)) {
     throw new Error(`Unknown region "${code}". Expected file: ${file}`);
   }
-  return JSON.parse(fs.readFileSync(file, 'utf-8')) as RegionConfig;
+  const region = JSON.parse(fs.readFileSync(file, 'utf-8')) as RegionConfig;
+  // BASE_URL lets CI point the same region at a local ParaBank container instead of the public site.
+  return { ...region, baseUrl: process.env.BASE_URL ?? region.baseUrl };
 }
