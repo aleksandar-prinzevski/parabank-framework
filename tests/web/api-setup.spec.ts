@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loadApiUser } from '../../src/api/testUser';
 import { loadRegion } from '../../src/core/config';
 import { registerUser } from '../../src/web/registerUser';
 import { BankApi } from '../../src/api/client';

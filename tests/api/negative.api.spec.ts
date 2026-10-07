@@ -9,9 +9,8 @@ const json = { accept: 'application/json' };
 // Each test sends one bad request and checks how the API answers.
 
 test('unknown account returns 400', async ({ request }) => {
-  const res = await request.get(`login/${user.username}/wrong-password`, { headers: json });
+  const res = await request.get('accounts/99999999', { headers: json });
   expect(res.status()).toBe(400);
-  expect(await res.text()).toContain('Invalid username and/or password');
 });
 
 // Behavior not known yet: we print the response first, then add assertions.
